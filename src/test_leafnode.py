@@ -21,3 +21,7 @@ class TestLeafNode(unittest.TestCase):
             print(node.to_html())
         
         self.assertEqual(str(context.exception), "Leaf node must have a value")
+    
+    def test_img_leaf(self):
+        node = LeafNode("img", "")
+        self.assertEqual(node.to_html(), "<img />")
