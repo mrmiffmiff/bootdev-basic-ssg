@@ -6,22 +6,22 @@ class TestSplitNodesDelimiter(unittest.TestCase):
     def test_empty_array(self):
         old = []
         new = split_nodes_delimiter(old, "_", TextType.ITALIC)
-        self.assertEqual(new, [])
+        self.assertListEqual(new, [])
 
     def test_empty_string(self):
         old = [TextNode("", TextType.PLAIN)]
         new = split_nodes_delimiter(old, "_", TextType.ITALIC)
-        self.assertEqual(new, old)
+        self.assertListEqual(new, old)
 
     def test_non_plain(self):
         old = [TextNode("test _test_ test", TextType.BOLD)]
         new = split_nodes_delimiter(old, "_", TextType.ITALIC)
-        self.assertEqual(new, old)
+        self.assertListEqual(new, old)
 
     def test_no_delimiter(self):
         old = [TextNode("test", TextType.PLAIN)]
         new = split_nodes_delimiter(old, "_", TextType.ITALIC)
-        self.assertEqual(new, old)
+        self.assertListEqual(new, old)
 
     def test_single_node_italic(self):
         old = [TextNode("I just _had a_ sandwich", TextType.PLAIN)]
@@ -29,7 +29,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
         first = TextNode("I just ", TextType.PLAIN)
         second = TextNode("had a", TextType.ITALIC)
         third = TextNode(" sandwich", TextType.PLAIN)
-        self.assertEqual(new, [first, second, third])
+        self.assertListEqual(new, [first, second, third])
 
     def test_single_node_bold(self):
         old = [TextNode("I just **had a** sandwich", TextType.PLAIN)]
@@ -37,7 +37,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
         first = TextNode("I just ", TextType.PLAIN)
         second = TextNode("had a", TextType.BOLD)
         third = TextNode(" sandwich", TextType.PLAIN)
-        self.assertEqual(new, [first, second, third])
+        self.assertListEqual(new, [first, second, third])
 
     def test_single_node_code(self):
         old = [TextNode("I just `had a` sandwich", TextType.PLAIN)]
@@ -45,7 +45,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
         first = TextNode("I just ", TextType.PLAIN)
         second = TextNode("had a", TextType.CODE)
         third = TextNode(" sandwich", TextType.PLAIN)
-        self.assertEqual(new, [first, second, third])
+        self.assertListEqual(new, [first, second, third])
 
     def test_wrapping_delimiter(self):
         old = [TextNode("_I just had a sandwich_", TextType.PLAIN)]
@@ -53,7 +53,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
         first = TextNode("", TextType.PLAIN)
         second = TextNode("I just had a sandwich", TextType.ITALIC)
         third = TextNode("", TextType.PLAIN)
-        self.assertEqual(new, [first, second, third])
+        self.assertListEqual(new, [first, second, third])
 
     def test_multiple_nodes(self):
         old_first = TextNode("I just _had a_ sandwich", TextType.PLAIN)
@@ -70,4 +70,4 @@ class TestSplitNodesDelimiter(unittest.TestCase):
                     TextNode("It was the _tastiest_ sandwich", TextType.BOLD),
                     TextNode("in **the** sea", TextType.PLAIN)
                     ]
-        self.assertEqual(new, expected)
+        self.assertListEqual(new, expected)
