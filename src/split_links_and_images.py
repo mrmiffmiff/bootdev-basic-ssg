@@ -4,6 +4,9 @@ from find_links_and_images import extract_markdown_images, extract_markdown_link
 def split_nodes_image(old_nodes: list[TextNode]):
     new_nodes = []
     for node in old_nodes:
+        if node.text_type not in [TextType.PLAIN, TextType.BOLD, TextType.ITALIC]:
+            new_nodes.append(node)
+            continue
         new_inner_nodes = []
         images = extract_markdown_images(node.text)
         to_split = node
@@ -20,6 +23,9 @@ def split_nodes_image(old_nodes: list[TextNode]):
 def split_nodes_link(old_nodes: list[TextNode]):
     new_nodes = []
     for node in old_nodes:
+        if node.text_type not in [TextType.PLAIN, TextType.BOLD, TextType.ITALIC]:
+            new_nodes.append(node)
+            continue
         new_inner_nodes = []
         links = extract_markdown_links(node.text)
         to_split = node

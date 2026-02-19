@@ -82,3 +82,35 @@ class TestSplitLinksAndImages(unittest.TestCase):
             ],
             new_nodes,
         )
+    
+    def test_disallow_in_code(self):
+        old = [
+            TextNode("this would be [a link](https://www.example.com), but it's code", TextType.CODE),
+            TextNode("this would be ![an image](https://i.example.com/555), but it's code", TextType.CODE)
+        ]
+        new = split_nodes_link(split_nodes_image(old))
+        self.assertListEqual(old, new)
+
+    def test_allow_bold_italic_composed(self):
+        old = [
+            TextNode("this [link](https://www.example.com) is in bold", TextType.BOLD),
+            TextNode("this [link](https://www.example.com) is in italic", TextType.ITALIC),
+            TextNode("this ![image](https://i.example.com/555) is in bold", TextType.BOLD),
+            TextNode("this ![image](https://i.example.com/555) is in italic", TextType.ITALIC),
+        ]
+        expected = [
+            TextNode("this ", TextType.BOLD),
+            TextNode("link", TextType.LINK, "https://www.example.com"),
+            TextNode(" is in bold", TextType.BOLD),
+            TextNode("this ", TextType.ITALIC),
+            TextNode("link", TextType.LINK, "https://www.example.com"),
+            TextNode(" is in italic", TextType.ITALIC),
+            TextNode("this ", TextType.BOLD),
+            TextNode("image", TextType.IMAGE, "https://i.example.com/555"),
+            TextNode(" is in bold", TextType.BOLD),
+            TextNode("this ", TextType.ITALIC),
+            TextNode("image", TextType.IMAGE, "https://i.example.com/555"),
+            TextNode(" is in italic", TextType.ITALIC),
+        ]
+        actual = split_nodes_link(split_nodes_image(old))
+        self.assertListEqual(expected, actual)
