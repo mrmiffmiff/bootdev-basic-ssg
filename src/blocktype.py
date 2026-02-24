@@ -39,40 +39,43 @@ def get_list_nodes(lines: list[str]):
         children.append(li)
     return children
 
+def block_to_block_node(block: str):
+    match block_to_block_type(block):
+        case BlockType.HEADING:
+            level = block.index(' ')
+            content = block[level + 1:]
+            children = text_to_children(content)
+            parent = ParentNode(f"h{level}", children)
+            return parent
+        case BlockType.CODE:
+            content = block[4:-3]
+            content_text_node = TextNode(content, TextType.CODE)
+            content_html_node = text_node_to_html_node(content_text_node)
+            parent = ParentNode("pre", [content_html_node])
+            return parent
+        case BlockType.QUOTE:
+            start_index = 2 if block[1] == " " else 1
+            content = block[start_index:]
+            children = [block_to_block_node(content)]
+            parent = ParentNode("blockquote", children)
+            return parent
+        case BlockType.UNORDERED_LIST:
+            lines = block[2:].split("\n- ")
+            children = get_list_nodes(lines)
+            parent = ParentNode("ul", children)
+            return parent
+        case BlockType.ORDERED_LIST:
+            lines = re.split(r"\n\d+\. ", block[3:])
+            children = get_list_nodes(lines)
+            parent = ParentNode("ol", children)
+            return parent
+        case BlockType.PARAGRAPH:
+            content = block.replace("\n", " ")
+            return ParentNode("p", text_to_children(content))
+
 def markdown_to_html_node(markdown: str):
     blocks = markdown_to_blocks(markdown)
     block_nodes = []
     for block in blocks:
-        match block_to_block_type(block):
-            case BlockType.HEADING:
-                level = block.index(' ')
-                content = block[level + 1:]
-                children = text_to_children(content)
-                parent = ParentNode(f"h{level}", children)
-                block_nodes.append(parent)
-            case BlockType.CODE:
-                content = block[4:-3]
-                content_text_node = TextNode(content, TextType.CODE)
-                content_html_node = text_node_to_html_node(content_text_node)
-                parent = ParentNode("pre", [content_html_node])
-                block_nodes.append(parent)
-            case BlockType.QUOTE:
-                start_index = 2 if block[1] == " " else 1
-                content = block[start_index:]
-                children = text_to_children(content)
-                parent = ParentNode("blockquote", children)
-                block_nodes.append(parent)
-            case BlockType.UNORDERED_LIST:
-                lines = block[2:].split("\n- ")
-                children = get_list_nodes(lines)
-                parent = ParentNode("ul", children)
-                block_nodes.append(parent)
-            case BlockType.ORDERED_LIST:
-                lines = re.split(r"\n\d+\. ", block[3:])
-                children = get_list_nodes(lines)
-                parent = ParentNode("ol", children)
-                block_nodes.append(parent)
-            case BlockType.PARAGRAPH:
-                content = block.replace("\n", " ")
-                block_nodes.append(ParentNode("p", text_to_children(content)))
+        block_nodes.append(block_to_block_node(block))
     return ParentNode("div", block_nodes)

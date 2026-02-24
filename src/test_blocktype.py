@@ -66,3 +66,60 @@ the **same** even with inline stuff
             html,
             "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
         )
+
+    def test_headings(self):
+        md = """
+# Heading 1
+
+## Heading 2
+
+### Heading 3
+
+#### He_ad_ing 4
+
+##### Heading 5
+
+###### Heading 6
+
+####### Should just be a regular paragraph really
+"""
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><h1>Heading 1</h1><h2>Heading 2</h2><h3>Heading 3</h3><h4>He<i>ad</i>ing 4</h4><h5>Heading 5</h5><h6>Heading 6</h6><p>####### Should just be a regular paragraph really</p></div>"
+        )
+    
+    def test_quotes(self):
+        md = """
+>Test quote block 1
+with a newline
+
+> Test quote block 2
+"""
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><blockquote><p>Test quote block 1 with a newline</p></blockquote><blockquote><p>Test quote block 2</p></blockquote></div>"
+        )
+
+    def test_lists(self):
+        md = """
+- unordered list item 1
+- Unordered list item 2
+- unOrd_er_**ed** list item 3
+
+1. Ordered List item 1
+2. Ordered list item 2
+3. ordered list item 3
+"""
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><ul><li>unordered list item 1</li><li>Unordered list item 2</li><li>unOrd<i>er</i><b>ed</b> list item 3</li></ul><ol><li>Ordered List item 1</li><li>Ordered list item 2</li><li>ordered list item 3</li></ol></div>"
+        )
