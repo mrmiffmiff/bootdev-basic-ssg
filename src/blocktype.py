@@ -56,7 +56,7 @@ def block_to_block_node(block: str):
         case BlockType.QUOTE:
             start_index = 2 if block[1] == " " else 1
             content = block[start_index:]
-            children = [block_to_block_node(content)]
+            children = text_to_children(content)
             parent = ParentNode("blockquote", children)
             return parent
         case BlockType.UNORDERED_LIST:

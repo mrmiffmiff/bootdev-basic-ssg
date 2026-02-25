@@ -94,7 +94,8 @@ the **same** even with inline stuff
     def test_quotes(self):
         md = """
 >Test quote block 1
-with a newline
+
+with a newline actually just don't do that
 
 > Test quote block 2
 """
@@ -103,7 +104,7 @@ with a newline
         html = node.to_html()
         self.assertEqual(
             html,
-            "<div><blockquote><p>Test quote block 1 with a newline</p></blockquote><blockquote><p>Test quote block 2</p></blockquote></div>"
+            "<div><blockquote>Test quote block 1</blockquote><p>with a newline actually just don't do that</p><blockquote>Test quote block 2</blockquote></div>"
         )
 
     def test_lists(self):
